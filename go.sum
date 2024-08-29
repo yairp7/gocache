@@ -2,11 +2,7 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/stretchr/testify v1.8.0 h1:pSgiaMZlXftHpm5L7V1+rVB+AZJydKsMxsQBIJw4PKk=
-github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
-github.com/yairp7/go-lru-cache v0.0.0-20221216150550-c61633858dc0 h1:0D0hRxKRk3HBwXmDg0zJNvET+e55sygYyn9kuxbWdgc=
-github.com/yairp7/go-lru-cache v0.0.0-20221216150550-c61633858dc0/go.mod h1:TsJQMrnr73QOylPb85Zsuy1xpiDiLLl8+5Yq+/HQxxE=
+github.com/yairp7/go-common-lib v0.6.1 h1:tfBEe8E2omqA9CScqDpsVwQpCgz3FQ2dnSefUrpYMDI=
+github.com/yairp7/go-common-lib v0.6.1/go.mod h1:vyR+4sM5EMe1RRtwDLR9TUNrgVo1nxgRhkH3mXoB7ps=
 gopkg.in/stretchr/testify.v1 v1.2.2 h1:yhQC6Uy5CqibAIlk1wlusa/MJ3iAN49/BsR/dCCKz3M=
 gopkg.in/stretchr/testify.v1 v1.2.2/go.mod h1:QI5V/q6UbPmuhtm10CaFZxED9NreB8PnFYN9JcR6TxU=
-gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
-gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=

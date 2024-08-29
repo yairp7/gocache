@@ -20,10 +20,10 @@ func Test_LRUPolicy_afterAdd(t *testing.T) {
 	}
 
 	i := 0
-	node := lruPolicy.list.tail
+	node := lruPolicy.list.Tail()
 	for node != nil {
 		assert.Equal(t, entries[i].extraInfo[lruPolicyEntryKey], node)
-		node = node.next
+		node = node.Next()
 		i++
 	}
 

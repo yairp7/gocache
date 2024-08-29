@@ -1,5 +1,7 @@
 package cache
 
+import ds "github.com/yairp7/go-common-lib/ds/basic"
+
 type Policy[K comparable, V any] interface {
 	afterAdd(entry *cacheEntry[K, V])
 	beforeGet(entry *cacheEntry[K, V])
@@ -7,20 +9,21 @@ type Policy[K comparable, V any] interface {
 }
 
 type LRUPolicy[K comparable, V any] struct {
-	list *LinkedList[*cacheEntry[K, V]]
+	list *ds.LinkedList[*cacheEntry[K, V]]
 }
 
 func newLRUPolicy[K comparable, V any]() *LRUPolicy[K, V] {
-	return &LRUPolicy[K, V]{
-		list: NewLinkedList[*cacheEntry[K, V]](),
+	p := &LRUPolicy[K, V]{
+		list: ds.NewLinkedList[*cacheEntry[K, V]](),
 	}
+	return p
 }
 
 var lruPolicyEntryKey = struct{}{}
 
 func (p *LRUPolicy[K, V]) afterAdd(entry *cacheEntry[K, V]) {
 	if v, ok := entry.extraInfo[lruPolicyEntryKey]; ok {
-		p.list.MoveToFront(v.(*LinkedListEntry[*cacheEntry[K, V]]))
+		p.list.MoveToFront(v.(*ds.LinkedListEntry[*cacheEntry[K, V]]))
 		return
 	}
 
@@ -29,14 +32,14 @@ func (p *LRUPolicy[K, V]) afterAdd(entry *cacheEntry[K, V]) {
 }
 
 func (p *LRUPolicy[K, V]) beforeGet(entry *cacheEntry[K, V]) {
-	lruEntry := entry.extraInfo[lruPolicyEntryKey].(*LinkedListEntry[*cacheEntry[K, V]])
+	lruEntry := entry.extraInfo[lruPolicyEntryKey].(*ds.LinkedListEntry[*cacheEntry[K, V]])
 	p.list.MoveToFront(lruEntry)
 }
 
 func (p *LRUPolicy[K, V]) evict() *cacheEntry[K, V] {
 	evictedEntry := p.list.PopTail()
 	if evictedEntry != nil {
-		return evictedEntry.data
+		return evictedEntry.Data
 	}
 	return nil
 }
