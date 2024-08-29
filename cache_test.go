@@ -26,21 +26,21 @@ func Test_LRUCache(t *testing.T) {
 	})
 }
 
-func Test_MFUCache(t *testing.T) {
+func Test_LFUCache(t *testing.T) {
 	t.Run("Set", func(t *testing.T) {
-		mfuCache := NewMFUCache[int](10, 0)
+		lfuCache := NewLFUCache[int](10, 0)
 		for i := 0; i < 10; i++ {
-			mfuCache.Set(i, i)
+			lfuCache.Set(i, i)
 		}
 
 		for i := 9; i >= 0; i-- {
 			for j := 0; j < i; j++ {
-				mfuCache.Set(i, i)
+				lfuCache.Set(i, i)
 			}
 		}
 
 		for i := 0; i < 10; i++ {
-			entry := mfuCache.Evict()
+			entry := lfuCache.Evict()
 			assert.Equal(t, i, entry.value)
 		}
 	})
@@ -114,16 +114,16 @@ func Benchmark_Set(b *testing.B) {
 		}
 	})
 
-	b.Run("MFU", func(b *testing.B) {
+	b.Run("LFU", func(b *testing.B) {
 		b.ReportAllocs()
-		mfuCache := NewMFUCache[int, int](1000, 0)
+		lfuCache := NewLFUCache[int, int](1000, 0)
 
 		for i := 0; i < 1000; i++ {
-			mfuCache.Set(i, i)
+			lfuCache.Set(i, i)
 		}
 
 		for i := 0; i < b.N; i++ {
-			mfuCache.Set(i, i)
+			lfuCache.Set(i, i)
 		}
 	})
 }

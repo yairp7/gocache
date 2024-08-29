@@ -44,25 +44,25 @@ func (p *LRUPolicy[K, V]) evict() *cacheEntry[K, V] {
 	return nil
 }
 
-type MFUPolicy[K comparable, V any] struct {
+type LFUPolicy[K comparable, V any] struct {
 	minHeap Heap[*cacheEntry[K, V]]
 }
 
-func newMFUPolicy[K comparable, V any]() *MFUPolicy[K, V] {
-	return &MFUPolicy[K, V]{
+func newLFUPolicy[K comparable, V any]() *LFUPolicy[K, V] {
+	return &LFUPolicy[K, V]{
 		minHeap: NewMinHeap[*cacheEntry[K, V]](),
 	}
 }
 
-var mfuPolicyEntryKey = struct{}{}
+var lfuPolicyEntryKey = struct{}{}
 
-func (p *MFUPolicy[K, V]) incrementWeight(node *HeapNode[*cacheEntry[K, V]]) {
+func (p *LFUPolicy[K, V]) incrementWeight(node *HeapNode[*cacheEntry[K, V]]) {
 	node.Weight++
 	p.minHeap.Order(node.Index)
 }
 
-func (p *MFUPolicy[K, V]) afterAdd(entry *cacheEntry[K, V]) {
-	if v, ok := entry.extraInfo[mfuPolicyEntryKey]; ok {
+func (p *LFUPolicy[K, V]) afterAdd(entry *cacheEntry[K, V]) {
+	if v, ok := entry.extraInfo[lfuPolicyEntryKey]; ok {
 		node := v.(*HeapNode[*cacheEntry[K, V]])
 		p.incrementWeight(node)
 		return
@@ -70,15 +70,15 @@ func (p *MFUPolicy[K, V]) afterAdd(entry *cacheEntry[K, V]) {
 
 	node := &HeapNode[*cacheEntry[K, V]]{Weight: 1, Data: entry}
 	p.minHeap.Push(node)
-	entry.extraInfo[mfuPolicyEntryKey] = node
+	entry.extraInfo[lfuPolicyEntryKey] = node
 }
 
-func (p *MFUPolicy[K, V]) beforeGet(entry *cacheEntry[K, V]) {
-	node := entry.extraInfo[mfuPolicyEntryKey].(*HeapNode[*cacheEntry[K, V]])
+func (p *LFUPolicy[K, V]) beforeGet(entry *cacheEntry[K, V]) {
+	node := entry.extraInfo[lfuPolicyEntryKey].(*HeapNode[*cacheEntry[K, V]])
 	p.incrementWeight(node)
 }
 
-func (p *MFUPolicy[K, V]) evict() *cacheEntry[K, V] {
+func (p *LFUPolicy[K, V]) evict() *cacheEntry[K, V] {
 	if p.minHeap.Len() > 0 {
 		evictedEntry := p.minHeap.Pop()
 		return evictedEntry.Data

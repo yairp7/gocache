@@ -90,8 +90,8 @@ func Test_LRUPolicy_evict(t *testing.T) {
 	assert.Equal(t, entries[2].key, lruPolicy.evict().key)
 }
 
-func Test_MFUPolicy_afterAdd(t *testing.T) {
-	mfuPolicy := newMFUPolicy[string, string]()
+func Test_LFUPolicy_afterAdd(t *testing.T) {
+	lfuPolicy := newLFUPolicy[string, string]()
 
 	entries := []*cacheEntry[string, string]{
 		{key: "a", value: "a", extraInfo: make(EntryExtraInfo)},
@@ -100,23 +100,23 @@ func Test_MFUPolicy_afterAdd(t *testing.T) {
 	}
 
 	for _, entry := range entries {
-		mfuPolicy.afterAdd(entry)
+		lfuPolicy.afterAdd(entry)
 	}
 
-	for i, node := range mfuPolicy.minHeap.Values.Nodes {
-		assert.Equal(t, entries[i].extraInfo[mfuPolicyEntryKey], node)
+	for i, node := range lfuPolicy.minHeap.Values.Nodes {
+		assert.Equal(t, entries[i].extraInfo[lfuPolicyEntryKey], node)
 	}
 
-	mfuPolicy.afterAdd(entries[0])
-	mfuPolicy.afterAdd(entries[1])
-	mfuPolicy.afterAdd(entries[1])
+	lfuPolicy.afterAdd(entries[0])
+	lfuPolicy.afterAdd(entries[1])
+	lfuPolicy.afterAdd(entries[1])
 
-	node := mfuPolicy.minHeap.Pop()
+	node := lfuPolicy.minHeap.Pop()
 	assert.Equal(t, entries[2].key, node.Data.key)
 }
 
-func Test_MFUPolicy_beforeGet(t *testing.T) {
-	mfuPolicy := newMFUPolicy[string, string]()
+func Test_LFUPolicy_beforeGet(t *testing.T) {
+	lfuPolicy := newLFUPolicy[string, string]()
 
 	entries := []*cacheEntry[string, string]{
 		{key: "a", value: "a", extraInfo: make(EntryExtraInfo)},
@@ -125,25 +125,25 @@ func Test_MFUPolicy_beforeGet(t *testing.T) {
 	}
 
 	for _, entry := range entries {
-		mfuPolicy.afterAdd(entry)
+		lfuPolicy.afterAdd(entry)
 	}
 
-	mfuPolicy.beforeGet(entries[0])
-	mfuPolicy.beforeGet(entries[0])
-	mfuPolicy.beforeGet(entries[0])
-	mfuPolicy.beforeGet(entries[0])
+	lfuPolicy.beforeGet(entries[0])
+	lfuPolicy.beforeGet(entries[0])
+	lfuPolicy.beforeGet(entries[0])
+	lfuPolicy.beforeGet(entries[0])
 
-	mfuPolicy.beforeGet(entries[2])
-	mfuPolicy.beforeGet(entries[2])
-	mfuPolicy.beforeGet(entries[2])
+	lfuPolicy.beforeGet(entries[2])
+	lfuPolicy.beforeGet(entries[2])
+	lfuPolicy.beforeGet(entries[2])
 
-	assert.Equal(t, entries[1].key, mfuPolicy.minHeap.Pop().Data.key)
-	assert.Equal(t, entries[2].key, mfuPolicy.minHeap.Pop().Data.key)
-	assert.Equal(t, entries[0].key, mfuPolicy.minHeap.Pop().Data.key)
+	assert.Equal(t, entries[1].key, lfuPolicy.minHeap.Pop().Data.key)
+	assert.Equal(t, entries[2].key, lfuPolicy.minHeap.Pop().Data.key)
+	assert.Equal(t, entries[0].key, lfuPolicy.minHeap.Pop().Data.key)
 }
 
-func Test_MFUPolicy_evict(t *testing.T) {
-	mfuPolicy := newMFUPolicy[string, string]()
+func Test_LFUPolicy_evict(t *testing.T) {
+	lfuPolicy := newLFUPolicy[string, string]()
 
 	entries := []*cacheEntry[string, string]{
 		{key: "a", value: "a", extraInfo: make(EntryExtraInfo)},
@@ -152,19 +152,19 @@ func Test_MFUPolicy_evict(t *testing.T) {
 	}
 
 	for _, entry := range entries {
-		mfuPolicy.afterAdd(entry)
+		lfuPolicy.afterAdd(entry)
 	}
 
-	mfuPolicy.beforeGet(entries[0])
-	mfuPolicy.beforeGet(entries[0])
-	mfuPolicy.beforeGet(entries[0])
-	mfuPolicy.beforeGet(entries[0])
+	lfuPolicy.beforeGet(entries[0])
+	lfuPolicy.beforeGet(entries[0])
+	lfuPolicy.beforeGet(entries[0])
+	lfuPolicy.beforeGet(entries[0])
 
-	mfuPolicy.beforeGet(entries[2])
-	mfuPolicy.beforeGet(entries[2])
-	mfuPolicy.beforeGet(entries[2])
+	lfuPolicy.beforeGet(entries[2])
+	lfuPolicy.beforeGet(entries[2])
+	lfuPolicy.beforeGet(entries[2])
 
-	assert.Equal(t, entries[1].key, mfuPolicy.evict().key)
-	assert.Equal(t, entries[2].key, mfuPolicy.evict().key)
-	assert.Equal(t, entries[0].key, mfuPolicy.evict().key)
+	assert.Equal(t, entries[1].key, lfuPolicy.evict().key)
+	assert.Equal(t, entries[2].key, lfuPolicy.evict().key)
+	assert.Equal(t, entries[0].key, lfuPolicy.evict().key)
 }
