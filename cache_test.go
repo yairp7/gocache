@@ -15,11 +15,7 @@ func Test_LRUCache(t *testing.T) {
 			lruCache.Set(i, i)
 		}
 
-		for i := 9; i >= 0; i-- {
-			lruCache.Set(i, i)
-		}
-
-		for i := 9; i >= 0; i-- {
+		for i := 0; i < 10; i++ {
 			entry := lruCache.Evict()
 			assert.Equal(t, i, entry.value)
 		}
@@ -31,17 +27,15 @@ func Test_LFUCache(t *testing.T) {
 		lfuCache := NewLFUCache[int](10, 0)
 		for i := 0; i < 10; i++ {
 			lfuCache.Set(i, i)
-		}
-
-		for i := 9; i >= 0; i-- {
 			for j := 0; j < i; j++ {
-				lfuCache.Set(i, i)
+				lfuCache.Get(i)
 			}
 		}
 
 		for i := 0; i < 10; i++ {
 			entry := lfuCache.Evict()
 			assert.Equal(t, i, entry.value)
+			// fmt.Println(entry.key, entry.extraInfo[lfuWeightPolicyEntryKey])
 		}
 	})
 }

@@ -20,7 +20,7 @@ func Test_LRUPolicy_afterAdd(t *testing.T) {
 	}
 
 	i := 0
-	node := lruPolicy.list.Tail()
+	node := lruPolicy.orderList.Tail()
 	for node != nil {
 		assert.Equal(t, entries[i].extraInfo[lruPolicyEntryKey], node)
 		node = node.Next()
@@ -31,9 +31,9 @@ func Test_LRUPolicy_afterAdd(t *testing.T) {
 	lruPolicy.afterAdd(entries[1])
 	lruPolicy.afterAdd(entries[1])
 
-	assert.Equal(t, entries[2].extraInfo[lruPolicyEntryKey], lruPolicy.list.PopTail())
-	assert.Equal(t, entries[0].extraInfo[lruPolicyEntryKey], lruPolicy.list.PopTail())
-	assert.Equal(t, entries[1].extraInfo[lruPolicyEntryKey], lruPolicy.list.PopTail())
+	assert.Equal(t, entries[2].extraInfo[lruPolicyEntryKey], lruPolicy.orderList.PopTail())
+	assert.Equal(t, entries[0].extraInfo[lruPolicyEntryKey], lruPolicy.orderList.PopTail())
+	assert.Equal(t, entries[1].extraInfo[lruPolicyEntryKey], lruPolicy.orderList.PopTail())
 }
 
 func Test_LRUPolicy_beforeGet(t *testing.T) {
@@ -58,9 +58,9 @@ func Test_LRUPolicy_beforeGet(t *testing.T) {
 	lruPolicy.beforeGet(entries[2])
 	lruPolicy.beforeGet(entries[2])
 
-	assert.Equal(t, entries[1].extraInfo[lruPolicyEntryKey], lruPolicy.list.PopTail())
-	assert.Equal(t, entries[0].extraInfo[lruPolicyEntryKey], lruPolicy.list.PopTail())
-	assert.Equal(t, entries[2].extraInfo[lruPolicyEntryKey], lruPolicy.list.PopTail())
+	assert.Equal(t, entries[1].extraInfo[lruPolicyEntryKey], lruPolicy.orderList.PopTail())
+	assert.Equal(t, entries[0].extraInfo[lruPolicyEntryKey], lruPolicy.orderList.PopTail())
+	assert.Equal(t, entries[2].extraInfo[lruPolicyEntryKey], lruPolicy.orderList.PopTail())
 }
 
 func Test_LRUPolicy_evict(t *testing.T) {
@@ -103,16 +103,13 @@ func Test_LFUPolicy_afterAdd(t *testing.T) {
 		lfuPolicy.afterAdd(entry)
 	}
 
-	for i, node := range lfuPolicy.minHeap.Values.Nodes {
-		assert.Equal(t, entries[i].extraInfo[lfuPolicyEntryKey], node)
-	}
-
 	lfuPolicy.afterAdd(entries[0])
 	lfuPolicy.afterAdd(entries[1])
 	lfuPolicy.afterAdd(entries[1])
 
-	node := lfuPolicy.minHeap.Pop()
-	assert.Equal(t, entries[2].key, node.Data.key)
+	assert.Equal(t, entries[2].key, lfuPolicy.heap.Pop().Data.key)
+	assert.Equal(t, entries[0].key, lfuPolicy.heap.Pop().Data.key)
+	assert.Equal(t, entries[1].key, lfuPolicy.heap.Pop().Data.key)
 }
 
 func Test_LFUPolicy_beforeGet(t *testing.T) {
@@ -137,9 +134,9 @@ func Test_LFUPolicy_beforeGet(t *testing.T) {
 	lfuPolicy.beforeGet(entries[2])
 	lfuPolicy.beforeGet(entries[2])
 
-	assert.Equal(t, entries[1].key, lfuPolicy.minHeap.Pop().Data.key)
-	assert.Equal(t, entries[2].key, lfuPolicy.minHeap.Pop().Data.key)
-	assert.Equal(t, entries[0].key, lfuPolicy.minHeap.Pop().Data.key)
+	assert.Equal(t, entries[1].key, lfuPolicy.heap.Pop().Data.key)
+	assert.Equal(t, entries[2].key, lfuPolicy.heap.Pop().Data.key)
+	assert.Equal(t, entries[0].key, lfuPolicy.heap.Pop().Data.key)
 }
 
 func Test_LFUPolicy_evict(t *testing.T) {

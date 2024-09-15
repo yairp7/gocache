@@ -39,7 +39,6 @@ func NewBaseCache[K comparable, V any](policy Policy[K, V], capacity int, defaul
 }
 
 func (c *BaseCache[K, V]) removeEntry(entry *cacheEntry[K, V]) {
-	clear(entry.extraInfo)
 	delete(c.mapping, entry.key)
 	c.size--
 }
@@ -66,20 +65,19 @@ func (c *BaseCache[K, V]) Set(key K, value V) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
-	var entry *cacheEntry[K, V]
-
-	if e, ok := c.mapping[key]; ok {
-		entry = e
-	} else {
-		entry = newCacheEntry(key, value)
-		c.addEntry(entry)
+	if v, ok := c.mapping[key]; ok {
+		v.value = value
+		c.mapping[key] = v
+		return
 	}
+
+	entry := newCacheEntry(key, value)
+	c.addEntry(entry)
 
 	c.policy.afterAdd(entry)
 
 	if c.Size() > c.capacity {
-		evictedEntry := c.policy.evict()
-		c.removeEntry(evictedEntry)
+		c.Evict()
 	}
 }
 
